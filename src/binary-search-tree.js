@@ -1,6 +1,6 @@
-const { NotImplementedError } = require('../extensions/index.js');
+const { NotImplementedError } = require('../extensions/index.js')
 
-// const { Node } = require('../extensions/list-tree.js');
+const { Node } = require('../extensions/list-tree.js')
 
 /**
 * Implement simple binary search tree according to task description
@@ -8,42 +8,67 @@ const { NotImplementedError } = require('../extensions/index.js');
 */
 class BinarySearchTree {
 
+  constructor() {
+    this.tree = null
+  }
+
   root() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+    return this.tree
   }
 
-  add(/* data */) {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+  add(data, node = this.tree) {
+    if (!node) {
+      this.tree = new Node(data)
+    } else {
+      if (data == node.data) return
+      const mode = data < node.data ? 'left' : 'right'
+      !node[mode] ? node[mode] = new Node(data) : this.add(data, node[mode])
+    }
   }
 
-  has(/* data */) {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+  has(data) {
+    return !!this.find(data)
   }
 
-  find(/* data */) {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+  find(data, node = this.tree) {
+    if (!node) return null
+    if (data === node.data) return node
+    return data < node.data ? this.find(data, node.left) : this.find(data, node.right)
   }
 
-  remove(/* data */) {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+  seek(node, mode='left') {
+    while (node[mode]) {
+      node = node[mode]
+    }
+    return node.data
+  }
+
+  remove(data, node = this.tree) {
+    if (!node) return
+    if (data === node.data) {
+      if (!node.left && !node.right) return null
+      if (!node.left) return node.right
+      if (!node.right) return node.left
+      node.data = this.seek(node.right)
+      node.right = this.remove(node.data, node.right)
+    } else {
+      const mode = data < node.data ? 'left' : 'right'
+      node[mode] = this.remove(data, node[mode])
+    }
+    return node
   }
 
   min() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+    if (!this.tree) return
+    return this.seek(this.tree)
   }
 
   max() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+    if (!this.tree) return
+    return this.seek(this.tree, 'right')
   }
 }
 
 module.exports = {
   BinarySearchTree
-};
+}
